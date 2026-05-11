@@ -1,0 +1,19 @@
+# Dashboard provider — tells Grafana to load any *.json files in the
+# /var/lib/grafana/dashboards directory (mounted from ./dashboards on the host).
+#
+# Edits made in the Grafana UI to a provisioned dashboard are kept in-memory
+# only; to make them permanent, export the JSON and overwrite the file.
+
+apiVersion: 1
+
+providers:
+  - name: AixBOMS samples
+    orgId: 1
+    folder: AixBOMS
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards
+      foldersFromFilesStructure: false

@@ -1,0 +1,32 @@
+# Provisioned datasource: AixBOMS REST API via the Infinity plugin.
+#
+# Grafana reads this file once on container start and creates / updates the
+# datasource. To change auth, URL, or headers, edit this file and restart
+# the container (`docker compose restart grafana`).
+#
+# Inside the container, the AixBOMS server on your host is reachable at
+# http://host.docker.internal:8080 (see docker-compose.yml -> extra_hosts).
+
+apiVersion: 1
+
+datasources:
+  - name: AixBOMS REST
+    uid: aixboms-rest
+    type: yesoreyeram-infinity-datasource
+    access: proxy
+    # Base URL — individual queries append the endpoint path.
+    url: http://host.docker.internal:8080
+    isDefault: true
+    editable: true
+    jsonData:
+      # Restrict outbound requests to this host. Add more entries if you
+      # later query additional AixBOMS environments.
+      allowedHosts:
+        - http://host.docker.internal:8080
+      # No auth for the viability test. To enable a bearer token later:
+      #   1. Uncomment the `auth_method` line below.
+      #   2. Add the matching secureJsonData block (see comment further down).
+      # auth_method: bearerToken
+      timeoutInSeconds: 30
+    # secureJsonData:
+    #   bearerToken: "PASTE_YOUR_TOKEN_HERE"

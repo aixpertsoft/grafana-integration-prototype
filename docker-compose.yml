@@ -1,0 +1,47 @@
+# Grafana stack for the AixBOMS viability test.
+#
+# Brings up a single Grafana container with:
+#   - the Infinity datasource plugin pre-installed
+#   - a provisioned datasource pointing at the AixBOMS REST API
+#   - a sample "Pollen count" dashboard
+#
+# Start with:    docker compose up -d
+# Stop with:     docker compose down
+# Reset state:   docker compose down -v   (deletes the named volume below)
+
+services:
+  grafana:
+    image: grafana/grafana-oss:11.2.0
+    container_name: aixboms-grafana
+    ports:
+      # Grafana UI on http://localhost:3000
+      - "3010:3000"
+    environment:
+      # First-time admin login. Change after first start in Grafana → Profile.
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      # Auto-install the Infinity datasource plugin on container start.
+      GF_INSTALL_PLUGINS: yesoreyeram-infinity-datasource
+      # Allow the provisioned dashboard to reference the Infinity datasource
+      # by name without complaints.
+      GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: ""
+      # Friendly log output.
+      GF_LOG_LEVEL: info
+    volumes:
+      # Persist Grafana state (users, edited dashboards, etc.) between restarts.
+      - grafana-data:/var/lib/grafana
+      # Read-only provisioning: datasources + dashboard providers.
+      - ./provisioning:/etc/grafana/provisioning:ro
+      # Dashboards loaded by the provider in provisioning/dashboards/.
+      - ./dashboards:/var/lib/grafana/dashboards:ro
+    extra_hosts:
+      # IMPORTANT for Linux hosts:
+      # Lets the container reach the AixBOMS server running on the *host*
+      # at http://host.docker.internal:8080 . Mac and Windows Docker Desktop
+      # already provide this name automatically, but the entry is harmless
+      # on those platforms.
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+volumes:
+  grafana-data:

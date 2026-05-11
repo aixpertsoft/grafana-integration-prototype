@@ -1,0 +1,138 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Viability test: query the AixBOMS sensordata endpoint via the Infinity REST datasource. Adjust the column selectors in the panel if your response shape differs from the assumed { sensor, values: [ { time, AVG, MAX, MIN, COUNT, SUM } ] } layout.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "aixboms-rest" },
+      "description": "Time-series for sensor `pollen_count`. The query body is sent as POST JSON to /aixboms/rest/sensordata/query. Grafana's $__from / $__to time range is substituted into the body.",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "auto",
+            "spanNulls": true,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "options": {
+        "legend": { "calcs": ["mean", "max", "min"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "none" }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "aixboms-rest" },
+          "type": "json",
+          "source": "url",
+          "format": "timeseries",
+          "url": "/aixboms/rest/sensordata/query",
+          "url_options": {
+            "method": "POST",
+            "body_type": "raw",
+            "body_content_type": "application/json",
+            "body": "{\n  \"aggregateFunctions\": [\"AVG\", \"MAX\", \"MIN\"],\n  \"from\": { \"time\": ${__from} },\n  \"to\":   { \"time\": ${__to} },\n  \"aggregationWindow\": { \"timeUnit\": \"HOUR\", \"duration\": 1 },\n  \"sensors\": [\"pollen_count\"]\n}"
+          },
+          "parser": "backend",
+          "root_selector": "",
+          "columns": [
+            { "selector": "time",  "text": "Time", "type": "timestamp_epoch" },
+            { "selector": "AVG",   "text": "AVG",  "type": "number" },
+            { "selector": "MAX",   "text": "MAX",  "type": "number" },
+            { "selector": "MIN",   "text": "MIN",  "type": "number" }
+          ],
+          "filters": []
+        }
+      ],
+      "title": "pollen_count — AVG / MIN / MAX",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "aixboms-rest" },
+      "description": "Raw response from the endpoint, so you can see the actual JSON shape and adjust the column selectors above if needed.",
+      "fieldConfig": {
+        "defaults": { "color": { "mode": "thresholds" }, "mappings": [], "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] } },
+        "overrides": []
+      },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 10 },
+      "id": 2,
+      "options": {
+        "cellHeight": "sm",
+        "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false },
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": { "type": "yesoreyeram-infinity-datasource", "uid": "aixboms-rest" },
+          "type": "json",
+          "source": "url",
+          "format": "table",
+          "url": "/aixboms/rest/sensordata/query",
+          "url_options": {
+            "method": "POST",
+            "body_type": "raw",
+            "body_content_type": "application/json",
+            "body": "{\n  \"aggregateFunctions\": [\"AVG\", \"MAX\", \"MIN\", \"COUNT\", \"SUM\"],\n  \"from\": { \"time\": ${__from} },\n  \"to\":   { \"time\": ${__to} },\n  \"aggregationWindow\": { \"timeUnit\": \"HOUR\", \"duration\": 12 },\n  \"sensors\": [\"pollen_count\"]\n}"
+          },
+          "parser": "backend",
+          "root_selector": "",
+          "columns": [],
+          "filters": []
+        }
+      ],
+      "title": "Raw response (table) — use this to inspect the JSON shape",
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": ["aixboms", "sample"],
+  "templating": { "list": [] },
+  "time": { "from": "now-7d", "to": "now" },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Pollen count — AixBOMS sample",
+  "uid": "aixboms-pollen-sample",
+  "version": 1,
+  "weekStart": ""
+}
