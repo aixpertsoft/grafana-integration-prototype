@@ -12,11 +12,12 @@ What's inside:
   AixBOMS server running on your machine).
 - `provisioning/dashboards/provider.yaml` — tells Grafana to load any JSON
   dashboards it finds in `./dashboards`.
-- `dashboards/pollen-count.json` — a sample dashboard with two panels that
-  POST the demo query to `/aixboms/rest/sensordata/query`.
+- `dashboards/pollen-count.json` — a sample dashboard that POSTs queries to
+  `/aixboms/rest/sensordata/grafana/query`, which returns a flat JSON array
+  Grafana can consume with minimal configuration.
 
 You should not need to edit any Grafana settings by hand to get the first
-panels rendering — just bring AixBOMS up, start the container, and open the
+panel rendering — just bring AixBOMS up, start the container, and open the
 dashboard.
 
 ---
@@ -28,17 +29,24 @@ dashboard.
    - Windows: same link, choose the WSL2 backend during install.
    - Linux: install `docker` + `docker compose` from your distro's packages.
 2. **AixBOMS** running locally and reachable at
-   `http://localhost:8080/aixboms/rest/sensordata/query`.
+   `http://localhost:8080/aixboms/rest/sensordata/grafana/query`.
    - Test from a terminal first:
      ```bash
-     curl -X POST http://localhost:8080/aixboms/rest/sensordata/query \
+     curl -X POST http://localhost:8080/aixboms/rest/sensordata/grafana/query \
        -H "Content-Type: application/json" \
        -d '{
-         "aggregateFunctions": ["AVG","MAX","MIN","COUNT","SUM"],
+         "aggregateFunctions": ["AVG","MAX","MIN","COUNT"],
          "from": { "time": 1514761200000 },
          "aggregationWindow": { "timeUnit": "HOUR", "duration": 12 },
          "sensors": ["pollen_count"]
        }'
+     ```
+   - The response should be a flat JSON array like:
+     ```json
+     [
+       { "time": 1514761200000, "sensor": "pollen_count", "AVG": 42.3, "MAX": 89.0, "MIN": 12.0, "COUNT": 1.0 },
+       ...
+     ]
      ```
    - If this returns JSON, you're good. If not, fix AixBOMS access first —
      the rest of this guide depends on it.
@@ -77,7 +85,7 @@ Press `Ctrl-C` to stop tailing the logs (the container keeps running).
 
 ## 2. Log in
 
-Open <http://localhost:3000> in a browser.
+Open <http://localhost:3010> in a browser.
 
 - Username: `admin`
 - Password: `admin`
@@ -132,58 +140,56 @@ To rotate the token later, update `.env` and run `docker compose up -d` again.
 
 ## 4. Open the sample dashboard
 
-In the left nav: **Dashboards → AixBOMS → Pollen count — AixBOMS sample**.
+In the left nav: **Dashboards** — find and open **New dashboard** (or whatever
+you named it when saving).
 
-You should see two panels:
+You should see a panel showing data returned from
+`/aixboms/rest/sensordata/grafana/query`. The panel type defaults to a table;
+see section 5 for converting it to a time series chart.
 
-- **`pollen_count — AVG / MIN / MAX`** — time-series panel.
-- **Raw response (table)** — the unparsed response as a table, so you can
-  inspect the exact JSON shape your endpoint returns.
-
-If the panels show "No data" or an error, jump to
+If the panel shows "No data" or an error, jump to
 [Troubleshooting](#6-troubleshooting) below.
 
 ---
 
-## 5. Adjust to your response shape
+## 5. Display data as a time series chart
 
-The sample dashboard assumes the response from
-`/aixboms/rest/sensordata/query` looks roughly like:
+The `/sensordata/grafana/query` endpoint returns a flat JSON array that the
+Infinity plugin can read with no Rows/Root or column mapping configuration.
+The only step needed is telling Grafana that the `time` field is a timestamp.
 
-```json
-[
-  {
-    "time": 1514761200000,
-    "AVG": 42.3,
-    "MAX": 89,
-    "MIN": 12,
-    "COUNT": 720,
-    "SUM": 30456
-  },
-  ...
-]
-```
+### Convert the time field
 
-— i.e. a top-level array of rows where each row has a `time` field and one
-field per aggregate function. **Your real response will almost certainly
-have a different shape.** Use the **Raw response (table)** panel to discover
-the actual shape, then:
+1. In the panel editor, click the **Transform data** tab.
+2. Click **Add transformation** → search for **Convert field type**.
+3. Set field `time` → convert to **Time**.
 
-1. Edit the **`pollen_count — AVG / MIN / MAX`** panel (hover → pencil icon).
-2. In the query editor on the right, find **Parsing options & Result fields**.
-3. Set **Rows / Root** to the JSON path that points to your array of rows.
-   Examples:
-   - response is `{ "results": [ … ] }` → root selector `results`
-   - response is `[ { "sensor": "...", "values": [ … ] } ]` → root selector `0.values`
-   - response is already a top-level array → leave empty.
-4. Update the **Columns** mappings if your field names differ (e.g.
-   `timestamp` instead of `time`).
-5. Click **Refresh** — the panel should redraw.
-6. **Save** the dashboard (top-right disk icon) once happy.
+### Switch to a time series visualization
 
-Grafana's time range is injected into the request body via `${__from}` and
-`${__to}` (epoch milliseconds), so changing the time picker at the top right
-re-queries your endpoint with the new range automatically.
+1. In the panel editor, click the panel type picker (top right) and select
+   **Time series**.
+2. Each aggregate field (`AVG`, `MAX`, `MIN`, etc.) becomes a separate line.
+
+### Infinity query settings (for reference)
+
+| Setting | Value |
+|---|---|
+| Type | JSON |
+| Source | URL |
+| Method | POST |
+| URL | `http://host.docker.internal:8080/aixboms/rest/sensordata/grafana/query` |
+| Parser | Backend |
+| Rows / Root | *(leave empty)* |
+| Columns | *(leave empty — auto-detected)* |
+
+### Save the dashboard back to the repo
+
+Once the panel looks right, export it and overwrite `dashboards/pollen-count.json`:
+
+1. Click **Share** (or gear icon) → **Export as code** → copy the JSON.
+2. Paste it into `dashboards/pollen-count.json` in this repo.
+3. Run `docker compose down -v && docker compose up -d` to confirm it
+   provisions correctly on a clean start.
 
 ---
 
@@ -197,7 +203,7 @@ The container can't reach AixBOMS.
   your normal shell.
 - Confirm the container can reach the host: 
   ```bash
-  docker exec -it aixboms-grafana curl -v http://host.docker.internal:8080/aixboms/rest/sensordata/query
+  docker exec -it aixboms-grafana curl -v http://host.docker.internal:8080/aixboms/rest/sensordata/grafana/query
   ```
   If this fails on Linux, double-check that `extra_hosts: host-gateway` is
   present in `docker-compose.yml` and that your firewall isn't blocking the
