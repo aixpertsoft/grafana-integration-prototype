@@ -23,10 +23,15 @@ datasources:
       # later query additional AixBOMS environments.
       allowedHosts:
         - http://host.docker.internal:8080
-      # No auth for the viability test. To enable a bearer token later:
-      #   1. Uncomment the `auth_method` line below.
-      #   2. Add the matching secureJsonData block (see comment further down).
-      # auth_method: bearerToken
+      auth_method: bearerToken
       timeoutInSeconds: 30
-    # secureJsonData:
-    #   bearerToken: "PASTE_YOUR_TOKEN_HERE"
+    # The bearer token is injected from the AIXBOMS_BEARER_TOKEN environment
+    # variable (set in ../.env and forwarded by docker-compose.yml). Grafana
+    # substitutes $AIXBOMS_BEARER_TOKEN at provisioning time and stores the
+    # resulting value encrypted in its internal database.
+    #
+    # To rotate the token:
+    #   1. Edit ../.env and replace AIXBOMS_BEARER_TOKEN=...
+    #   2. From the grafana/ folder run: docker compose up -d
+    #secureJsonData:
+    #  bearerToken: $AIXBOMS_BEARER_TOKEN

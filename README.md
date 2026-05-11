@@ -87,7 +87,50 @@ test.
 
 ---
 
-## 3. Open the sample dashboard
+## 3. Set the bearer token (if AixBOMS requires authentication)
+
+Skip this section if your local AixBOMS instance accepts unauthenticated requests.
+
+There are two ways to supply the token. **Option A** is the quickest for a local test; **Option B** is reproducible across restarts and useful when sharing the setup with a team.
+
+### Option A — Grafana UI (no restart required)
+
+1. In Grafana, go to **Connections → Data sources** (left nav).
+2. Click **AixBOMS REST**.
+3. Scroll to the **Auth** section.
+4. Under **Bearer token auth**, paste your token into the **Token** field.
+5. Click **Save & test** at the bottom.
+
+Grafana stores the token encrypted in its internal database. It survives container restarts as long as you don't wipe the volume (`docker compose down -v`).
+
+### Option B — provisioning file + `.env` (reproducible)
+
+This approach keeps the token out of the YAML file and injects it via an environment variable, which Grafana substitutes at provisioning time.
+
+1. Create a `.env` file next to `docker-compose.yml` (it is already listed in `.gitignore`):
+
+   ```
+   AIXBOMS_BEARER_TOKEN=your-token-here
+   ```
+
+2. Open [provisioning/datasources/aixboms.yaml](provisioning/datasources/aixboms.yaml) and uncomment the last two lines:
+
+   ```yaml
+   secureJsonData:
+     bearerToken: $AIXBOMS_BEARER_TOKEN
+   ```
+
+3. Restart Grafana so it re-reads the provisioning file:
+
+   ```bash
+   docker compose up -d
+   ```
+
+To rotate the token later, update `.env` and run `docker compose up -d` again.
+
+---
+
+## 4. Open the sample dashboard
 
 In the left nav: **Dashboards → AixBOMS → Pollen count — AixBOMS sample**.
 
@@ -98,11 +141,11 @@ You should see two panels:
   inspect the exact JSON shape your endpoint returns.
 
 If the panels show "No data" or an error, jump to
-[Troubleshooting](#5-troubleshooting) below.
+[Troubleshooting](#6-troubleshooting) below.
 
 ---
 
-## 4. Adjust to your response shape
+## 5. Adjust to your response shape
 
 The sample dashboard assumes the response from
 `/aixboms/rest/sensordata/query` looks roughly like:
@@ -144,7 +187,7 @@ re-queries your endpoint with the new range automatically.
 
 ---
 
-## 5. Troubleshooting
+## 6. Troubleshooting
 
 ### "Connection refused" / "failed to fetch" in a panel
 
@@ -172,7 +215,7 @@ docker compose up -d
 
 ### Dashboard panel shows JSON but no chart
 
-The column selectors don't match your response shape. See section 4 above.
+The column selectors don't match your response shape. See section 5 above.
 
 ### Permission / CORS / TLS issues
 
@@ -193,7 +236,7 @@ docker compose up -d
 
 ---
 
-## 6. Common commands cheat-sheet
+## 7. Common commands cheat-sheet
 
 | Action                          | Command                            |
 | ------------------------------- | ---------------------------------- |
@@ -207,12 +250,11 @@ docker compose up -d
 
 ---
 
-## 7. Next steps after the viability test
+## 8. Next steps after the viability test
 
 If the test goes well, the natural follow-ups (in roughly increasing effort):
 
-1. **Add an auth token** to the datasource (uncomment `bearerToken` in
-   `aixboms.yaml`, paste the token, restart).
+1. **Add an auth token** to the datasource — see [section 3](#3-set-the-bearer-token-if-aixboms-requires-authentication).
 2. **Add a sensor variable** to the dashboard so the panel queries any
    sensor, not just `pollen_count`. This requires a discovery endpoint
    (`GET /api/sensors` or similar) that returns a list — wire it as a

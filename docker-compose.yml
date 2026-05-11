@@ -11,7 +11,7 @@
 
 services:
   grafana:
-    image: grafana/grafana-oss:11.2.0
+    image: grafana/grafana-oss:latest
     container_name: aixboms-grafana
     ports:
       # Grafana UI on http://localhost:3000
@@ -20,8 +20,11 @@ services:
       # First-time admin login. Change after first start in Grafana → Profile.
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin
-      # Auto-install the Infinity datasource plugin on container start.
-      GF_INSTALL_PLUGINS: yesoreyeram-infinity-datasource
+      # Pre-install the Infinity datasource plugin on container start.
+      # GF_INSTALL_PLUGINS is deprecated in Grafana 13; use GF_PLUGINS_PREINSTALL.
+      # Note: GF_PLUGINS_PREINSTALL does not support inline version pinning;
+      # pin the Grafana image version above to ensure plugin compatibility.
+      GF_PLUGINS_PREINSTALL: yesoreyeram-infinity-datasource
       # Allow the provisioned dashboard to reference the Infinity datasource
       # by name without complaints.
       GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: ""
