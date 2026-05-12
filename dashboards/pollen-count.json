@@ -5,8 +5,8 @@
     "name": "adb55mx",
     "namespace": "default",
     "uid": "a8bcd030-ac42-4ab4-9e17-b104dc6c44ff",
-    "resourceVersion": "1778560292698994",
-    "generation": 3,
+    "resourceVersion": "1778621817494993",
+    "generation": 8,
     "creationTimestamp": "2026-05-11T18:35:26Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "265415789719552"
@@ -18,11 +18,11 @@
       "grafana.app/managerAllowsEdits": "true",
       "grafana.app/managerId": "AixBOMS samples",
       "grafana.app/saved-from-ui": "Grafana v13.0.1 (a100054f)",
-      "grafana.app/sourceChecksum": "dbc3320de08c1b1478af21935eaf3587",
+      "grafana.app/sourceChecksum": "38c3eda326d555138ba3cd181b8ba80c",
       "grafana.app/sourcePath": "/var/lib/grafana/dashboards/pollen-count.json",
-      "grafana.app/sourceTimestamp": "1778524498000",
+      "grafana.app/sourceTimestamp": "1778599280000",
       "grafana.app/updatedBy": "user:eflrl7b8stipsf",
-      "grafana.app/updatedTimestamp": "2026-05-12T04:31:32Z",
+      "grafana.app/updatedTimestamp": "2026-05-12T21:36:57Z",
       "grafana.app/folderTitle": "AixBOMS",
       "grafana.app/folderUrl": "/dashboards/f/cflrl7mvws7b4e/aixboms"
     }
@@ -82,12 +82,12 @@
                         "root_selector": "",
                         "source": "url",
                         "type": "json",
-                        "url": "/aixboms/rest/sensordata/grafana/query",
+                        "url": "/aixboms/rest/sensordata/grafana/query?sensors=AP-DUS-BIL-DC01-GF-01&aggregateFunction=AVG&aggregateFunction=MIN&aggregateFunction=MAX&aggregateFunction=COUNT&startTime=1469656800&aggregationWindow=DAY",
                         "url_options": {
-                          "body_content_type": "application/json",
+                          "body_content_type": "text/plain",
                           "body_type": "raw",
-                          "data": "{\r\n  \"aggregateFunctions\": [\r\n    \"AVG\",\r\n    \"MIN\",\r\n    \"MAX\",\r\n    \"COUNT\"\r\n  ],\r\n  \"from\": {\r\n    \"time\": 1469656800000\r\n  },\r\n  \"aggregationWindow\": {\r\n    \"timeUnit\": \"HOUR\",\r\n    \"duration\": 1\r\n  },\r\n  \"sensors\": [\r\n    \"AP-DUS-BIL-DC01-GF-01\"\r\n  ]\r\n}",
-                          "method": "POST"
+                          "data": "",
+                          "method": "GET"
                         }
                       }
                     },
