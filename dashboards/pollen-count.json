@@ -82,7 +82,7 @@
                         "root_selector": "",
                         "source": "url",
                         "type": "json",
-                        "url": "/aixboms/rest/sensordata/grafana/query?sensors=AP-DUS-BIL-DC01-GF-01&aggregateFunction=AVG&aggregateFunction=MIN&aggregateFunction=MAX&aggregateFunction=COUNT&startTime=1469656800&aggregationWindow=DAY",
+                        "url": "/aixboms/rest/sensordata/grafana/query?sensors=AP-DUS-BIL-DC01-GF-01&aggregateFunction=AVG&aggregateFunction=MIN&aggregateFunction=MAX&aggregateFunction=COUNT&startTime=${__from:date:seconds}&endTime=${__to:date:seconds}&aggregationWindow=DAY",
                         "url_options": {
                           "body_content_type": "text/plain",
                           "body_type": "raw",
