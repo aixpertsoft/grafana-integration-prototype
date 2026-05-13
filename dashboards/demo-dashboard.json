@@ -243,7 +243,7 @@
       "hideTimepicker": false,
       "fiscalYearStartMonth": 0
     },
-    "title": "New dashboard",
+    "title": "demo-dashboard",
     "variables": [],
     "preferences": {
       "layout": {
