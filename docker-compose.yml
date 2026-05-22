@@ -24,7 +24,7 @@ services:
       # GF_INSTALL_PLUGINS is deprecated in Grafana 13; use GF_PLUGINS_PREINSTALL.
       # Note: GF_PLUGINS_PREINSTALL does not support inline version pinning;
       # pin the Grafana image version above to ensure plugin compatibility.
-      GF_PLUGINS_PREINSTALL: yesoreyeram-infinity-datasource
+      GF_PLUGINS_PREINSTALL: yesoreyeram-infinity-datasource,volkovlabs-echarts-panel
       # Allow the provisioned dashboard to reference the Infinity datasource
       # by name without complaints.
       GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS: ""

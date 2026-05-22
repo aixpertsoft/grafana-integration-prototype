@@ -2,21 +2,19 @@
   "apiVersion": "dashboard.grafana.app/v2",
   "kind": "Dashboard",
   "metadata": {
-    "name": "adf7xm8",
+    "name": "addl8x5",
     "namespace": "default",
-    "uid": "d908041a-6e42-4bbc-8607-63e6c31e2839",
-    "resourceVersion": "1779455698507002",
-    "generation": 7,
-    "creationTimestamp": "2026-05-22T12:51:59Z",
+    "uid": "6e3de9f6-9f88-4fa7-904d-f7120e997d04",
+    "resourceVersion": "1779460963371987",
+    "generation": 1,
+    "creationTimestamp": "2026-05-22T14:42:43Z",
     "labels": {
-      "grafana.app/deprecatedInternalID": "4165252894183424"
+      "grafana.app/deprecatedInternalID": "4193117016915968"
     },
     "annotations": {
       "grafana.app/createdBy": "user:dfmtxfn5yhm2of",
       "grafana.app/folder": "",
-      "grafana.app/saved-from-ui": "Grafana v13.0.1 (a100054f)",
-      "grafana.app/updatedBy": "user:dfmtxfn5yhm2of",
-      "grafana.app/updatedTimestamp": "2026-05-22T13:14:58Z"
+      "grafana.app/saved-from-ui": "Grafana v13.0.1 (a100054f)"
     }
   },
   "spec": {
@@ -48,7 +46,7 @@
         "kind": "Panel",
         "spec": {
           "id": 1,
-          "title": "New panel",
+          "title": "Count by ${groupBy}",
           "description": "",
           "links": [],
           "data": {
@@ -92,46 +90,58 @@
           },
           "vizConfig": {
             "kind": "VizConfig",
-            "group": "piechart",
-            "version": "13.0.1",
+            "group": "volkovlabs-echarts-panel",
+            "version": "7.2.5",
             "spec": {
               "options": {
-                "legend": {
-                  "displayMode": "table",
-                  "placement": "right",
-                  "showLegend": true
+                "baidu": {
+                  "callback": "bmapReady",
+                  "key": ""
                 },
-                "pieType": "pie",
-                "reduceOptions": {
-                  "calcs": [
-                    "lastNotNull"
-                  ],
-                  "fields": "",
-                  "values": true
+                "editor": {
+                  "format": "auto"
                 },
-                "sort": "desc",
-                "tooltip": {
-                  "hideZeros": false,
-                  "mode": "single",
-                  "sort": "none"
+                "editorMode": "visual",
+                "gaode": {
+                  "key": "",
+                  "plugin": "AMap.Scale,AMap.ToolBar"
+                },
+                "getOption": "const series = context.panel.data.series.map((s) => {\n  const sData = s.fields.find((f) => f.type === 'number').values.buffer || s.fields.find((f) => f.type === 'number').values;\n  const sTime = s.fields.find((f) => f.type === 'time').values.buffer || s.fields.find((f) => f.type === 'time').values;\n  \n  return {\n    name: s.refId,\n    type: 'line',\n    showSymbol: false,\n    areaStyle: {\n      opacity: 0.1,\n    },\n    lineStyle: {\n      width: 1,\n    },\n    data: sData.map((d, i) => [sTime[i], d.toFixed(2)]),\n  };\n});\n\n/**\n * Enable Data Zoom by default\n */\nsetTimeout(() => context.panel.chart.dispatchAction({\n  type: 'takeGlobalCursor',\n  key: 'dataZoomSelect',\n  dataZoomSelectActive: true,\n}), 500);\n\n/**\n * Update Time Range on Zoom\n */\ncontext.panel.chart.on('datazoom', function (params) {\n  const startValue = params.batch[0]?.startValue;\n  const endValue = params.batch[0]?.endValue;\n  locationService.partial({ from: startValue, to: endValue });\n});\n\nreturn {\n  backgroundColor: 'transparent',\n  tooltip: {\n    trigger: 'axis',\n  },\n  legend: {\n    left: '0',\n    bottom: '0',\n    data: context.panel.data.series.map((s) => s.refId),\n    textStyle: {\n      color: 'rgba(128, 128, 128, .9)',\n    },\n  },\n  toolbox: {\n    feature: {\n      dataZoom: {\n        yAxisIndex: 'none',\n        icon: {\n          zoom: 'path://',\n          back: 'path://',\n        },\n      },\n      saveAsImage: {},\n    }\n  },\n  xAxis: {\n    type: 'time',\n  },\n  yAxis: {\n    type: 'value',\n    min: 'dataMin',\n  },\n  grid: {\n    left: '2%',\n    right: '2%',\n    top: '2%',\n    bottom: 24,\n    containLabel: true,\n  },\n  series,\n};",
+                "google": {
+                  "callback": "gmapReady",
+                  "key": ""
+                },
+                "map": "none",
+                "renderer": "canvas",
+                "themeEditor": {
+                  "config": "{}",
+                  "name": "default"
+                },
+                "visualEditor": {
+                  "code": "if (!context.panel.data?.series?.length) return {};\n\nconst labels = context.panel.data.series[0].fields.find(f => f.name === 'Category1').values;\nconst values = context.panel.data.series[0].fields.find(f => f.name === 'Count_ObjNr').values;\n\nreturn {\n  tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },\n  legend: { orient: 'vertical', right: '5%', top: 'center' },\n  series: [{\n    type: 'pie',\n    radius: ['40%', '70%'],\n    center: ['40%', '50%'],\n    itemStyle: { borderRadius: 8, borderWidth: 2, borderColor: '#fff' },\n    label: { show: true, formatter: '{b}\\n{d}%' },\n    emphasis: { itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0,0,0,0.5)' } },\n    data: labels.map((l, i) => ({ name: l ?? '(none)', value: values[i] }))\n  }]\n};\n",
+                  "dataset": [],
+                  "series": []
                 }
               },
               "fieldConfig": {
                 "defaults": {
-                  "color": {
-                    "mode": "shades",
-                    "fixedColor": "orange"
-                  },
-                  "custom": {
-                    "hideFrom": {
-                      "legend": false,
-                      "tooltip": false,
-                      "viz": false
-                    }
-                  },
                   "fieldMinMax": false
                 },
-                "overrides": []
+                "overrides": [
+                  {
+                    "__systemRef": "hideSeriesFrom",
+                    "matcher": {
+                      "id": "byNames",
+                      "options": {
+                        "mode": "exclude",
+                        "names": [],
+                        "prefix": "All except:",
+                        "readOnly": true
+                      }
+                    },
+                    "properties": []
+                  }
+                ]
               }
             }
           }
@@ -141,7 +151,7 @@
     "layout": {
       "kind": "AutoGridLayout",
       "spec": {
-        "maxColumnCount": 3,
+        "maxColumnCount": 2,
         "columnWidthMode": "standard",
         "rowHeightMode": "standard",
         "items": [
@@ -181,7 +191,7 @@
       "hideTimepicker": false,
       "fiscalYearStartMonth": 0
     },
-    "title": "template1",
+    "title": "echart-demo",
     "variables": [
       {
         "kind": "QueryVariable",
@@ -221,6 +231,7 @@
                 }
               },
               "meta": {
+                "textField": "shortName",
                 "valueField": "name"
               },
               "queryType": "infinity",
@@ -274,7 +285,7 @@
                 }
               },
               "meta": {
-                "textField": "shortName",
+                "textField": "name",
                 "valueField": "name"
               },
               "queryType": "infinity",
