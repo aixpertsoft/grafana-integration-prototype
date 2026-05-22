@@ -2,30 +2,7 @@
   "apiVersion": "dashboard.grafana.app/v2",
   "kind": "Dashboard",
   "metadata": {
-    "name": "adb55mx",
-    "namespace": "default",
-    "uid": "a8bcd030-ac42-4ab4-9e17-b104dc6c44ff",
-    "resourceVersion": "1778621817494993",
-    "generation": 8,
-    "creationTimestamp": "2026-05-11T18:35:26Z",
-    "labels": {
-      "grafana.app/deprecatedInternalID": "265415789719552"
-    },
-    "annotations": {
-      "grafana.app/createdBy": "access-policy:service",
-      "grafana.app/folder": "cflrl7mvws7b4e",
-      "grafana.app/managedBy": "classic-file-provisioning",
-      "grafana.app/managerAllowsEdits": "true",
-      "grafana.app/managerId": "AixBOMS samples",
-      "grafana.app/saved-from-ui": "Grafana v13.0.1 (a100054f)",
-      "grafana.app/sourceChecksum": "38c3eda326d555138ba3cd181b8ba80c",
-      "grafana.app/sourcePath": "/var/lib/grafana/dashboards/pollen-count.json",
-      "grafana.app/sourceTimestamp": "1778599280000",
-      "grafana.app/updatedBy": "user:eflrl7b8stipsf",
-      "grafana.app/updatedTimestamp": "2026-05-12T21:36:57Z",
-      "grafana.app/folderTitle": "AixBOMS",
-      "grafana.app/folderUrl": "/dashboards/f/cflrl7mvws7b4e/aixboms"
-    }
+    "name": "adpkxdn"
   },
   "spec": {
     "annotations": [
@@ -50,13 +27,14 @@
       }
     ],
     "cursorSync": "Off",
+    "description": "demo-dashboard",
     "editable": true,
     "elements": {
-      "panel-1": {
+      "panel-2": {
         "kind": "Panel",
         "spec": {
-          "id": 1,
-          "title": "Power AP-DUS-BIL-DC01-GF-01",
+          "id": 2,
+          "title": "Component Count By Category",
           "description": "",
           "links": [],
           "data": {
@@ -74,7 +52,18 @@
                         "name": "aixboms-rest"
                       },
                       "spec": {
-                        "columns": [],
+                        "columns": [
+                          {
+                            "selector": "Category2",
+                            "text": "Class",
+                            "type": "string"
+                          },
+                          {
+                            "selector": "Count_ObjNr",
+                            "text": "Count",
+                            "type": "number"
+                          }
+                        ],
                         "filters": [],
                         "format": "table",
                         "global_query_id": "",
@@ -82,10 +71,8 @@
                         "root_selector": "",
                         "source": "url",
                         "type": "json",
-                        "url": "/aixboms/rest/sensordata/grafana/query?sensors=AP-DUS-BIL-DC01-GF-01&aggregateFunction=AVG&aggregateFunction=MIN&aggregateFunction=MAX&aggregateFunction=COUNT&startTime=${__from:date:seconds}&endTime=${__to:date:seconds}&aggregationWindow=DAY",
+                        "url": "/aixboms/rest/grafana/query/execute?view=CCKTCICompView&groupBy=Category2&select=ObjNr:COUNT&includeNulls=true",
                         "url_options": {
-                          "body_content_type": "text/plain",
-                          "body_type": "raw",
                           "data": "",
                           "method": "GET"
                         }
@@ -96,23 +83,111 @@
                   }
                 }
               ],
-              "transformations": [
-                {
-                  "kind": "Transformation",
-                  "group": "convertFieldType",
-                  "spec": {
-                    "options": {
-                      "conversions": [
-                        {
-                          "destinationType": "time",
-                          "targetField": "time"
-                        }
-                      ],
-                      "fields": {}
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "piechart",
+            "version": "13.0.1",
+            "spec": {
+              "options": {
+                "displayLabels": [
+                  "percent"
+                ],
+                "legend": {
+                  "displayMode": "table",
+                  "placement": "right",
+                  "showLegend": true
+                },
+                "pieType": "pie",
+                "reduceOptions": {
+                  "calcs": [],
+                  "fields": "",
+                  "values": true
+                },
+                "sort": "desc",
+                "tooltip": {
+                  "hideZeros": false,
+                  "mode": "single",
+                  "sort": "none"
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "color": {
+                    "mode": "shades",
+                    "fixedColor": "orange"
+                  },
+                  "custom": {
+                    "hideFrom": {
+                      "legend": false,
+                      "tooltip": false,
+                      "viz": false
                     }
+                  }
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-3": {
+        "kind": "Panel",
+        "spec": {
+          "id": 3,
+          "title": "New Employees",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "yesoreyeram-infinity-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "aixboms-rest"
+                      },
+                      "spec": {
+                        "columns": [
+                          {
+                            "selector": "EntryDate",
+                            "text": "",
+                            "type": "timestamp_epoch"
+                          },
+                          {
+                            "selector": "Count_ObjNr",
+                            "text": "",
+                            "type": "number"
+                          }
+                        ],
+                        "filters": [],
+                        "format": "table",
+                        "global_query_id": "",
+                        "parser": "backend",
+                        "root_selector": "",
+                        "source": "url",
+                        "type": "json",
+                        "url": "/aixboms/rest/grafana/query/execute?view=CCKTBIPersonStdView&filter=EntryDate!=null&groupBy=EntryDate:YEAR&select=ObjNr:COUNT&OrderBy=EntryDate",
+                        "url_options": {
+                          "data": "",
+                          "method": "GET"
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
                   }
                 }
               ],
+              "transformations": [],
               "queryOptions": {}
             }
           },
@@ -140,6 +215,7 @@
               },
               "fieldConfig": {
                 "defaults": {
+                  "decimals": 0,
                   "thresholds": {
                     "mode": "absolute",
                     "steps": [
@@ -154,7 +230,8 @@
                     ]
                   },
                   "color": {
-                    "mode": "palette-classic"
+                    "mode": "shades",
+                    "fixedColor": "orange"
                   },
                   "custom": {
                     "axisBorderShow": false,
@@ -163,9 +240,9 @@
                     "axisLabel": "",
                     "axisPlacement": "auto",
                     "barAlignment": 0,
-                    "barWidthFactor": 0.6,
-                    "drawStyle": "line",
-                    "fillOpacity": 10,
+                    "barWidthFactor": 0.5,
+                    "drawStyle": "bars",
+                    "fillOpacity": 0,
                     "gradientMode": "none",
                     "hideFrom": {
                       "legend": false,
@@ -173,18 +250,18 @@
                       "viz": false
                     },
                     "insertNulls": false,
-                    "lineInterpolation": "stepAfter",
-                    "lineWidth": 1,
-                    "pointSize": 5,
+                    "lineInterpolation": "linear",
+                    "lineWidth": 3,
+                    "pointSize": 10,
                     "scaleDistribution": {
                       "type": "linear"
                     },
-                    "showPoints": "auto",
+                    "showPoints": "always",
                     "showValues": false,
                     "spanNulls": false,
                     "stacking": {
                       "group": "A",
-                      "mode": "normal"
+                      "mode": "none"
                     },
                     "thresholdsStyle": {
                       "mode": "off"
@@ -200,19 +277,27 @@
       }
     },
     "layout": {
-      "kind": "GridLayout",
+      "kind": "AutoGridLayout",
       "spec": {
+        "maxColumnCount": 3,
+        "columnWidthMode": "standard",
+        "rowHeightMode": "standard",
         "items": [
           {
-            "kind": "GridLayoutItem",
+            "kind": "AutoGridLayoutItem",
             "spec": {
-              "x": 0,
-              "y": 0,
-              "width": 24,
-              "height": 11,
               "element": {
                 "kind": "ElementReference",
-                "name": "panel-1"
+                "name": "panel-2"
+              }
+            }
+          },
+          {
+            "kind": "AutoGridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-3"
               }
             }
           }
@@ -225,8 +310,8 @@
     "tags": [],
     "timeSettings": {
       "timezone": "browser",
-      "from": "2026-05-11T16:46:04.157Z",
-      "to": "2026-05-11T17:46:46.050Z",
+      "from": "now-6h",
+      "to": "now",
       "autoRefresh": "",
       "autoRefreshIntervals": [
         "5s",

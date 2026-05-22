@@ -15,6 +15,9 @@ What's inside:
 - `dashboards/pollen-count.json` — a sample dashboard that POSTs queries to
   `/aixboms/rest/sensordata/grafana/query`, which returns a flat JSON array
   Grafana can consume with minimal configuration.
+- `dashboards/pie-chart-builder.json` — a parameterized dashboard with three
+  dropdowns (View, Group By, Count Attribute) that renders a pie chart from any
+  AixBOMS view in seconds. See [section 9](#9-pie-chart-builder) for details.
 
 You should not need to edit any Grafana settings by hand to get the first
 panel rendering — just bring AixBOMS up, start the container, and open the
@@ -95,46 +98,26 @@ test.
 
 ---
 
-## 3. Set the bearer token (if AixBOMS requires authentication)
+## 3. Authentication
 
-Skip this section if your local AixBOMS instance accepts unauthenticated requests.
+The datasource is pre-configured for **basic auth** using the credentials in
+`.env` (next to `docker-compose.yml`). The default `.env` ships with:
 
-There are two ways to supply the token. **Option A** is the quickest for a local test; **Option B** is reproducible across restarts and useful when sharing the setup with a team.
+```
+AIXBOMS_USER=aixboms
+AIXBOMS_PASSWORD=aixboms
+```
 
-### Option A — Grafana UI (no restart required)
+These are injected into the provisioned datasource at container start, so auth
+survives restarts and volume wipes without any manual UI steps.
 
-1. In Grafana, go to **Connections → Data sources** (left nav).
-2. Click **AixBOMS REST**.
-3. Scroll to the **Auth** section.
-4. Under **Bearer token auth**, paste your token into the **Token** field.
-5. Click **Save & test** at the bottom.
+To use different credentials, edit `.env` and restart:
 
-Grafana stores the token encrypted in its internal database. It survives container restarts as long as you don't wipe the volume (`docker compose down -v`).
+```bash
+docker compose up -d
+```
 
-### Option B — provisioning file + `.env` (reproducible)
-
-This approach keeps the token out of the YAML file and injects it via an environment variable, which Grafana substitutes at provisioning time.
-
-1. Create a `.env` file next to `docker-compose.yml` (it is already listed in `.gitignore`):
-
-   ```
-   AIXBOMS_BEARER_TOKEN=your-token-here
-   ```
-
-2. Open [provisioning/datasources/aixboms.yaml](provisioning/datasources/aixboms.yaml) and uncomment the last two lines:
-
-   ```yaml
-   secureJsonData:
-     bearerToken: $AIXBOMS_BEARER_TOKEN
-   ```
-
-3. Restart Grafana so it re-reads the provisioning file:
-
-   ```bash
-   docker compose up -d
-   ```
-
-To rotate the token later, update `.env` and run `docker compose up -d` again.
+The `.env` file is listed in `.gitignore` — never commit real passwords.
 
 ---
 
@@ -253,6 +236,72 @@ docker compose up -d
 | Tail logs                       | `docker compose logs -f grafana`   |
 | Shell inside the container      | `docker exec -it aixboms-grafana bash` |
 | List running containers         | `docker ps`                        |
+
+---
+
+## 9. Pie Chart Builder
+
+`dashboards/pie-chart-builder.json` is a ready-to-use dashboard template that
+turns any AixBOMS view into a pie chart with three dropdown selections and zero
+manual query writing.
+
+### How it works
+
+The dashboard exposes three chained variables, all backed by the AixBOMS meta
+endpoints:
+
+| Variable | Endpoint | Description |
+|---|---|---|
+| **View** | `GET /aixboms/rest/grafana/meta/views` | All registered views. Supports regex filter — add `?names=CCKT.*` to restrict. |
+| **Group By** | `GET /aixboms/rest/grafana/meta/views/{view}` | Groupable attributes of the selected view (strings, numbers, dates). |
+| **Count Attribute** | `GET /aixboms/rest/grafana/meta/views/{view}` | All visible attributes — used as the COUNT target. |
+
+When you pick a **View**, the other two dropdowns refresh automatically.
+When you pick a **Group By** and a **Count Attribute**, the panel fires:
+
+```
+GET /aixboms/rest/grafana/query/execute
+    ?view={view}
+    &groupBy={groupBy}
+    &select={countAttr}:COUNT
+```
+
+and renders the result as a pie chart with slice labels and percentages.
+
+### Using the chart
+
+1. Open **Dashboards → AixBOMS → AixBOMS — Pie Chart Builder**.
+2. Select **View** (e.g. `CCKTCICompView`).
+3. Select **Group By** (e.g. `Category1`).
+4. Select **Count Attribute** (e.g. `ObjNr`).
+5. The pie chart renders immediately.
+6. To add the panel to another dashboard: open the panel menu (⋮) →
+   **More → Copy**, then paste it into the target dashboard.
+
+### Restricting which views appear
+
+By default all registered views are listed. To show only a curated subset,
+edit the **View** variable URL in the dashboard and add `?names=` regex
+parameters:
+
+```
+/aixboms/rest/grafana/meta/views?names=CCKTCIComp.*&names=CCKTPort.*
+```
+
+The server matches each pattern as a substring regex against the full view
+name, so plain strings work as prefix/infix filters too.
+
+### Grouping by a date with time-window truncation
+
+Append a time-window suffix to the Group By value for date attributes:
+
+```
+EntryDate:YEAR     — one slice per year
+EntryDate:QUARTER  — one slice per quarter
+EntryDate:MONTH    — one slice per month
+EntryDate:WEEK     — one slice per week
+EntryDate:DAY      — one slice per day
+```
 
 ---
 

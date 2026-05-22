@@ -18,20 +18,16 @@ datasources:
     url: http://host.docker.internal:8080
     isDefault: true
     editable: true
+    basicAuth: true
+    basicAuthUser: ${AIXBOMS_USER}
     jsonData:
       # Restrict outbound requests to this host. Add more entries if you
       # later query additional AixBOMS environments.
       allowedHosts:
         - http://host.docker.internal:8080
-      auth_method: bearerToken
+      auth_method: basicAuth
       timeoutInSeconds: 30
-    # The bearer token is injected from the AIXBOMS_BEARER_TOKEN environment
-    # variable (set in ../.env and forwarded by docker-compose.yml). Grafana
-    # substitutes $AIXBOMS_BEARER_TOKEN at provisioning time and stores the
-    # resulting value encrypted in its internal database.
-    #
-    # To rotate the token:
-    #   1. Edit ../.env and replace AIXBOMS_BEARER_TOKEN=...
-    #   2. From the grafana/ folder run: docker compose up -d
-    #secureJsonData:
-    #  bearerToken: $AIXBOMS_BEARER_TOKEN
+    # Credentials are injected from the .env file (never commit real passwords).
+    # Create/edit .env next to docker-compose.yml, then run: docker compose up -d
+    secureJsonData:
+      basicAuthPassword: ${AIXBOMS_PASSWORD}

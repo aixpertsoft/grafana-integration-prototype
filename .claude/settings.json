@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"d:\\\\AixBOMS\\\\git\\\\grafana-integration-project\" -Force)",
+      "Bash(Get-ChildItem -Path \"d:\\\\AixBOMS\\\\git\\\\grafana-integration-project\")",
+      "Bash(Select-Object -Property Name, Mode)",
+      "Bash(Get-ChildItem -Path \"d:\\\\AixBOMS\\\\git\\\\grafana-integration-project\" -Depth 2)",
+      "Bash(Format-Table -Property Name, Mode -AutoSize)",
+      "Bash(dir /s /b \"d:\\\\AixBOMS\\\\git\\\\verios\")",
+      "Bash(find \"/mnt/d/AixBOMS/git/grafana-integration-project\" -maxdepth 3 -type f | grep -E \"\\\\.\\(json|yaml|yml\\)$\")",
+      "Read(//mnt/d/AixBOMS/git/**)",
+      "WebSearch",
+      "WebFetch(domain:grafana.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(Get-ChildItem -Path \"d:\\\\AixBOMS\\\\git\\\\aixboms_head\\\\aixboms\\\\modules\\\\basics\\\\de.aixpertsoft.grafana\\\\src\\\\de\\\\aixpertsoft\\\\grafana\\\\dto\" -File)",
+      "Bash(Select-Object Name)",
+      "Bash(gradlew.bat :de.aixpertsoft.grafana:test --tests \"de.aixpertsoft.grafana.*\")",
+      "Bash(Remove-Item \"D:\\\\AixBOMS\\\\git\\\\aixboms_head\\\\aixboms\\\\modules\\\\basics\\\\de.aixpertsoft.grafana\\\\test\\\\de\\\\aixpertsoft\\\\grafana\\\\FileSystemGrafanaDashboardDaoTest.java\" -ErrorAction Stop)",
+      "Bash(Remove-Item \"D:\\\\AixBOMS\\\\git\\\\aixboms_head\\\\aixboms\\\\modules\\\\basics\\\\de.aixpertsoft.grafana\\\\test\\\\de\\\\aixpertsoft\\\\grafana\\\\GrafanaQueryMapperTest.java\" -ErrorAction Stop)",
+      "Bash(Write-Output \"Deleted both old test files.\")"
+    ]
+  }
+}
