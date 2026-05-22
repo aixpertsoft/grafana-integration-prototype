@@ -2,14 +2,14 @@
   "apiVersion": "dashboard.grafana.app/v2",
   "kind": "Dashboard",
   "metadata": {
-    "name": "addl8x5",
+    "name": "ad64pwp",
     "namespace": "default",
-    "uid": "6e3de9f6-9f88-4fa7-904d-f7120e997d04",
-    "resourceVersion": "1779460963371987",
+    "uid": "510f9a1f-4680-4660-84d4-89675c9ecbbb",
+    "resourceVersion": "1779463078509982",
     "generation": 1,
-    "creationTimestamp": "2026-05-22T14:42:43Z",
+    "creationTimestamp": "2026-05-22T15:17:58Z",
     "labels": {
-      "grafana.app/deprecatedInternalID": "4193117016915968"
+      "grafana.app/deprecatedInternalID": "4201989064589312"
     },
     "annotations": {
       "grafana.app/createdBy": "user:dfmtxfn5yhm2of",
@@ -118,7 +118,7 @@
                   "name": "default"
                 },
                 "visualEditor": {
-                  "code": "if (!context.panel.data?.series?.length) return {};\n\nconst labels = context.panel.data.series[0].fields.find(f => f.name === 'Category1').values;\nconst values = context.panel.data.series[0].fields.find(f => f.name === 'Count_ObjNr').values;\n\nreturn {\n  tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },\n  legend: { orient: 'vertical', right: '5%', top: 'center' },\n  series: [{\n    type: 'pie',\n    radius: ['40%', '70%'],\n    center: ['40%', '50%'],\n    itemStyle: { borderRadius: 8, borderWidth: 2, borderColor: '#fff' },\n    label: { show: true, formatter: '{b}\\n{d}%' },\n    emphasis: { itemStyle: { shadowBlur: 10, shadowOffsetX: 0, shadowColor: 'rgba(0,0,0,0.5)' } },\n    data: labels.map((l, i) => ({ name: l ?? '(none)', value: values[i] }))\n  }]\n};\n",
+                  "code": "if (!context.panel.data?.series?.length) return {};\n\nconst PALETTE = [\n  '#FFA314', // brand orange\n  '#1A4A6E', // navy mid\n  '#FFB94A', // orange light\n  '#0D3352', // navy dark\n  '#FFCC7A', // orange pale\n  '#2B6B9A', // steel blue\n  '#FF8C00', // deep orange\n  '#3D8FC0', // sky blue\n  '#CC7F00', // burnt orange\n  '#5AADD4', // light blue\n  '#8B5500', // brown-orange\n  '#051C2D', // brand navy\n];\nconst groupBy = context.grafana.replaceVariables('${groupBy}');\nconst labels = context.panel.data.series[0].fields.find(f => f.name === groupBy).values;\nconst values = context.panel.data.series[0].fields.find(f => f.name === 'Count_ObjNr').values;\nconst raw = labels.map((l, i) => ({ name: l ?? '(none)', value: values[i] ?? 0 })).sort((a, b) => b.value - a.value);\n\nconst TOP = 12;\nconst top = raw.slice(0, TOP);\nconst otherSum = raw.slice(TOP).reduce((s, d) => s + d.value, 0);\nif (otherSum > 0) top.push({ name: 'Other', value: otherSum });\nconst total = top.reduce((s, d) => s + d.value, 0);\n\nreturn {\n  color: PALETTE,\n  backgroundColor: 'transparent',\n  tooltip: {\n    trigger: 'item',\n    backgroundColor: '#051C2D',\n    borderColor: '#FFA314',\n    borderWidth: 1,\n    textStyle: { color: '#F5F5F5', fontSize: 13 },\n    formatter: p => `<b>${p.name}</b><br/>Count: <b>${p.value}</b><br/>Share: <b>${p.percent}%</b>`\n  },\n  legend: {\n    type: 'scroll',\n    orient: 'vertical',\n    right: '2%',\n    top: 'middle',\n    width: 160,\n    itemWidth: 10,\n    itemHeight: 10,\n    itemGap: 8,\n    textStyle: { color: '#F5F5F5', fontSize: 11 },\n    pageTextStyle: { color: '#F5F5F5' },\n    pageIconColor: '#FFA314',\n    pageIconInactiveColor: '#bfbfbf',\n    formatter: name => {\n      const d = top.find(x => x.name === name);\n      const pct = d ? ((d.value / total) * 100).toFixed(1) : 0;\n      const label = name.length > 18 ? name.slice(0, 17) + '…' : name;\n      return `${label}  ${pct}%`;\n    }\n  },\n  series: [{\n    type: 'pie',\n    radius: ['40%', '80%'],\n    center: ['42%', '50%'],\n    avoidLabelOverlap: true,\n    itemStyle: { borderRadius: 5, borderColor: 'rgba(0,0,0,0.3)', borderWidth: 2 },\n    label: { show: true, position: 'outside', color: '#F5F5F5', fontSize: 11, formatter: p => p.percent > 4 ? `${p.percent}%` : '' },\n    labelLine: { length: 8, length2: 12, lineStyle: { color: '#bfbfbf' } },\n    emphasis: {\n      scale: true,\n      scaleSize: 6,\n      itemStyle: { shadowBlur: 20, shadowOffsetX: 0, shadowColor: 'rgba(5,28,45,0.5)' }\n    },\n    data: top\n  }]\n};\n",
                   "dataset": [],
                   "series": []
                 }
