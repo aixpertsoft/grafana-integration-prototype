@@ -17,7 +17,7 @@
       "grafana.app/saved-from-ui": "Grafana v13.0.1 (a100054f)"
     }
   },
-  "spec": {
+ "spec": {
     "annotations": [
       {
         "kind": "AnnotationQuery",
@@ -46,7 +46,7 @@
         "kind": "Panel",
         "spec": {
           "id": 1,
-          "title": "Count by ${groupBy}",
+          "title": "Count by Class",
           "description": "",
           "links": [],
           "data": {
@@ -72,7 +72,7 @@
                         "root_selector": "",
                         "source": "url",
                         "type": "json",
-                        "url": "/aixboms/rest/grafana/query/execute?view=${view}&groupBy=${groupBy}&select=ObjNr:COUNT&includeNulls=true",
+                        "url": "/aixboms/rest/grafana/query/execute?view=CCKTCICompView&groupBy=Category1&select=ObjNr:COUNT&includeNulls=true",
                         "url_options": {
                           "data": "",
                           "method": "GET"
@@ -106,7 +106,7 @@
                   "key": "",
                   "plugin": "AMap.Scale,AMap.ToolBar"
                 },
-                "getOption": "const series = context.panel.data.series.map((s) => {\n  const sData = s.fields.find((f) => f.type === 'number').values.buffer || s.fields.find((f) => f.type === 'number').values;\n  const sTime = s.fields.find((f) => f.type === 'time').values.buffer || s.fields.find((f) => f.type === 'time').values;\n  \n  return {\n    name: s.refId,\n    type: 'line',\n    showSymbol: false,\n    areaStyle: {\n      opacity: 0.1,\n    },\n    lineStyle: {\n      width: 1,\n    },\n    data: sData.map((d, i) => [sTime[i], d.toFixed(2)]),\n  };\n});\n\n/**\n * Enable Data Zoom by default\n */\nsetTimeout(() => context.panel.chart.dispatchAction({\n  type: 'takeGlobalCursor',\n  key: 'dataZoomSelect',\n  dataZoomSelectActive: true,\n}), 500);\n\n/**\n * Update Time Range on Zoom\n */\ncontext.panel.chart.on('datazoom', function (params) {\n  const startValue = params.batch[0]?.startValue;\n  const endValue = params.batch[0]?.endValue;\n  locationService.partial({ from: startValue, to: endValue });\n});\n\nreturn {\n  backgroundColor: 'transparent',\n  tooltip: {\n    trigger: 'axis',\n  },\n  legend: {\n    left: '0',\n    bottom: '0',\n    data: context.panel.data.series.map((s) => s.refId),\n    textStyle: {\n      color: 'rgba(128, 128, 128, .9)',\n    },\n  },\n  toolbox: {\n    feature: {\n      dataZoom: {\n        yAxisIndex: 'none',\n        icon: {\n          zoom: 'path://',\n          back: 'path://',\n        },\n      },\n      saveAsImage: {},\n    }\n  },\n  xAxis: {\n    type: 'time',\n  },\n  yAxis: {\n    type: 'value',\n    min: 'dataMin',\n  },\n  grid: {\n    left: '2%',\n    right: '2%',\n    top: '2%',\n    bottom: 24,\n    containLabel: true,\n  },\n  series,\n};",
+                "getOption": "const series = context.panel.data.series.map((s) => {\n  const sData = s.fields.find((f) => f.type === 'number').values.buffer || s.fields.find((f) => f.type === 'number').values;\n  const sTime = s.fields.find((f) => f.type === 'time').values.buffer || s.fields.find((f) => f.type === 'time').values;\n\n  return {\n    name: s.refId,\n    type: 'line',\n    showSymbol: false,\n    areaStyle: {\n      opacity: 0.1,\n    },\n    lineStyle: {\n      width: 1,\n    },\n    data: sData.map((d, i) => [sTime[i], d.toFixed(2)]),\n  };\n});\n\n/**\n * Enable Data Zoom by default\n */\nsetTimeout(() => context.panel.chart.dispatchAction({\n  type: 'takeGlobalCursor',\n  key: 'dataZoomSelect',\n  dataZoomSelectActive: true,\n}), 500);\n\n/**\n * Update Time Range on Zoom\n */\ncontext.panel.chart.on('datazoom', function (params) {\n  const startValue = params.batch[0]?.startValue;\n  const endValue = params.batch[0]?.endValue;\n  locationService.partial({ from: startValue, to: endValue });\n});\n\nreturn {\n  backgroundColor: 'transparent',\n  tooltip: {\n    trigger: 'axis',\n  },\n  legend: {\n    left: '0',\n    bottom: '0',\n    data: context.panel.data.series.map((s) => s.refId),\n    textStyle: {\n      color: 'rgba(128, 128, 128, .9)',\n    },\n  },\n  toolbox: {\n    feature: {\n      dataZoom: {\n        yAxisIndex: 'none',\n        icon: {\n          zoom: 'path://',\n          back: 'path://',\n        },\n      },\n      saveAsImage: {},\n    }\n  },\n  xAxis: {\n    type: 'time',\n  },\n  yAxis: {\n    type: 'value',\n    min: 'dataMin',\n  },\n  grid: {\n    left: '2%',\n    right: '2%',\n    top: '2%',\n    bottom: 24,\n    containLabel: true,\n  },\n  series,\n};",
                 "google": {
                   "callback": "gmapReady",
                   "key": ""
@@ -115,10 +115,10 @@
                 "renderer": "canvas",
                 "themeEditor": {
                   "config": "{}",
-                  "name": "default"
+                  "name": "custom"
                 },
                 "visualEditor": {
-                  "code": "if (!context.panel.data?.series?.length) return {};\n\nconst PALETTE = [\n  '#FFA314', // brand orange\n  '#1A4A6E', // navy mid\n  '#FFB94A', // orange light\n  '#0D3352', // navy dark\n  '#FFCC7A', // orange pale\n  '#2B6B9A', // steel blue\n  '#FF8C00', // deep orange\n  '#3D8FC0', // sky blue\n  '#CC7F00', // burnt orange\n  '#5AADD4', // light blue\n  '#8B5500', // brown-orange\n  '#051C2D', // brand navy\n];\nconst groupBy = context.grafana.replaceVariables('${groupBy}');\nconst labels = context.panel.data.series[0].fields.find(f => f.name === groupBy).values;\nconst values = context.panel.data.series[0].fields.find(f => f.name === 'Count_ObjNr').values;\nconst raw = labels.map((l, i) => ({ name: l ?? '(none)', value: values[i] ?? 0 })).sort((a, b) => b.value - a.value);\n\nconst TOP = 12;\nconst top = raw.slice(0, TOP);\nconst otherSum = raw.slice(TOP).reduce((s, d) => s + d.value, 0);\nif (otherSum > 0) top.push({ name: 'Other', value: otherSum });\nconst total = top.reduce((s, d) => s + d.value, 0);\n\nreturn {\n  color: PALETTE,\n  backgroundColor: 'transparent',\n  tooltip: {\n    trigger: 'item',\n    backgroundColor: '#051C2D',\n    borderColor: '#FFA314',\n    borderWidth: 1,\n    textStyle: { color: '#F5F5F5', fontSize: 13 },\n    formatter: p => `<b>${p.name}</b><br/>Count: <b>${p.value}</b><br/>Share: <b>${p.percent}%</b>`\n  },\n  legend: {\n    type: 'scroll',\n    orient: 'vertical',\n    right: '2%',\n    top: 'middle',\n    width: 160,\n    itemWidth: 10,\n    itemHeight: 10,\n    itemGap: 8,\n    textStyle: { color: '#F5F5F5', fontSize: 11 },\n    pageTextStyle: { color: '#F5F5F5' },\n    pageIconColor: '#FFA314',\n    pageIconInactiveColor: '#bfbfbf',\n    formatter: name => {\n      const d = top.find(x => x.name === name);\n      const pct = d ? ((d.value / total) * 100).toFixed(1) : 0;\n      const label = name.length > 18 ? name.slice(0, 17) + '…' : name;\n      return `${label}  ${pct}%`;\n    }\n  },\n  series: [{\n    type: 'pie',\n    radius: ['40%', '80%'],\n    center: ['42%', '50%'],\n    avoidLabelOverlap: true,\n    itemStyle: { borderRadius: 5, borderColor: 'rgba(0,0,0,0.3)', borderWidth: 2 },\n    label: { show: true, position: 'outside', color: '#F5F5F5', fontSize: 11, formatter: p => p.percent > 4 ? `${p.percent}%` : '' },\n    labelLine: { length: 8, length2: 12, lineStyle: { color: '#bfbfbf' } },\n    emphasis: {\n      scale: true,\n      scaleSize: 6,\n      itemStyle: { shadowBlur: 20, shadowOffsetX: 0, shadowColor: 'rgba(5,28,45,0.5)' }\n    },\n    data: top\n  }]\n};\n",
+                  "code": "if (!context.panel.data?.series?.length) return {};\n\n\nconst groupBy = 'Category1'\nconst labels = context.panel.data.series[0].fields.find(f => f.name === groupBy).values;\nconst values = context.panel.data.series[0].fields.find(f => f.name === 'Count_ObjNr').values;\nconst raw = labels.map((l, i) => ({ name: l ?? '(none)', value: values[i] ?? 0 })).sort((a, b) => b.value - a.value);\n\nconst TOP = 12;\nconst top = raw.slice(0, TOP);\nconst otherSum = raw.slice(TOP).reduce((s, d) => s + d.value, 0);\nif (otherSum > 0) top.push({ name: 'Other', value: otherSum });\nconst total = top.reduce((s, d) => s + d.value, 0);\n\nreturn {\n  backgroundColor: 'transparent',\n  tooltip: {\n    trigger: 'item',\n    backgroundColor: '#051C2D',\n    borderColor: '#FFA314',\n    borderWidth: 1,\n    textStyle: { color: '#F5F5F5', fontSize: 13 },\n    formatter: p => `<b>${p.name}</b><br/>Count: <b>${p.value}</b><br/>Share: <b>${p.percent}%</b>`\n  },\n  legend: {\n    type: 'scroll',\n    orient: 'vertical',\n    right: '2%',\n    top: 'middle',\n    width: 160,\n    itemWidth: 10,\n    itemHeight: 10,\n    itemGap: 8,\n    textStyle: { color: '#F5F5F5', fontSize: 11 },\n    pageTextStyle: { color: '#F5F5F5' },\n    pageIconColor: '#FFA314',\n    pageIconInactiveColor: '#bfbfbf',\n    formatter: name => {\n      const d = top.find(x => x.name === name);\n      const pct = d ? ((d.value / total) * 100).toFixed(1) : 0;\n      const label = name.length > 18 ? name.slice(0, 17) + '…' : name;\n      return `${label}  ${pct}%`;\n    }\n  },\n  series: [{\n    type: 'pie',\n    radius: ['40%', '80%'],\n    center: ['42%', '50%'],\n    avoidLabelOverlap: true,\n    itemStyle: { borderRadius: 5, borderColor: 'rgba(0,0,0,0.3)', borderWidth: 2 },\n    label: { show: true, position: 'outside', color: '#F5F5F5', fontSize: 11, formatter: p => p.percent > 4 ? `${p.percent}%` : '' },\n    labelLine: { length: 8, length2: 12, lineStyle: { color: '#bfbfbf' } },\n    emphasis: {\n      scale: true,\n      scaleSize: 6,\n      itemStyle: { shadowBlur: 20, shadowOffsetX: 0, shadowColor: 'rgba(5,28,45,0.5)' }\n    },\n    data: top\n  }]\n};\n",
                   "dataset": [],
                   "series": []
                 }
@@ -127,21 +127,98 @@
                 "defaults": {
                   "fieldMinMax": false
                 },
-                "overrides": [
-                  {
-                    "__systemRef": "hideSeriesFrom",
-                    "matcher": {
-                      "id": "byNames",
-                      "options": {
-                        "mode": "exclude",
-                        "names": [],
-                        "prefix": "All except:",
-                        "readOnly": true
+                "overrides": []
+              }
+            }
+          }
+        }
+      },
+      "panel-2": {
+        "kind": "Panel",
+        "spec": {
+          "id": 2,
+          "title": "Count by Class & Usage",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "yesoreyeram-infinity-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "aixboms-rest"
+                      },
+                      "spec": {
+                        "columns": [],
+                        "filters": [],
+                        "format": "table",
+                        "global_query_id": "",
+                        "parser": "backend",
+                        "root_selector": "",
+                        "source": "url",
+                        "type": "json",
+                        "url": "/aixboms/rest/grafana/query/execute?view=CCKTCICompView&groupBy=Category1&groupBy=Category2&select=ObjNr:COUNT&includeNulls=true",
+                        "url_options": {
+                          "data": "",
+                          "method": "GET"
+                        }
                       }
                     },
-                    "properties": []
+                    "refId": "A",
+                    "hidden": false
                   }
-                ]
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "volkovlabs-echarts-panel",
+            "version": "7.2.5",
+            "spec": {
+              "options": {
+                "baidu": {
+                  "callback": "bmapReady",
+                  "key": ""
+                },
+                "editor": {
+                  "format": "auto"
+                },
+                "editorMode": "visual",
+                "gaode": {
+                  "key": "",
+                  "plugin": "AMap.Scale,AMap.ToolBar"
+                },
+                "getOption": "const series = context.panel.data.series.map((s) => {\n  const sData = s.fields.find((f) => f.type === 'number').values.buffer || s.fields.find((f) => f.type === 'number').values;\n  const sTime = s.fields.find((f) => f.type === 'time').values.buffer || s.fields.find((f) => f.type === 'time').values;\n\n  return {\n    name: s.refId,\n    type: 'line',\n    showSymbol: false,\n    areaStyle: {\n      opacity: 0.1,\n    },\n    lineStyle: {\n      width: 1,\n    },\n    data: sData.map((d, i) => [sTime[i], d.toFixed(2)]),\n  };\n});\n\n/**\n * Enable Data Zoom by default\n */\nsetTimeout(() => context.panel.chart.dispatchAction({\n  type: 'takeGlobalCursor',\n  key: 'dataZoomSelect',\n  dataZoomSelectActive: true,\n}), 500);\n\n/**\n * Update Time Range on Zoom\n */\ncontext.panel.chart.on('datazoom', function (params) {\n  const startValue = params.batch[0]?.startValue;\n  const endValue = params.batch[0]?.endValue;\n  locationService.partial({ from: startValue, to: endValue });\n});\n\nreturn {\n  backgroundColor: 'transparent',\n  tooltip: {\n    trigger: 'axis',\n  },\n  legend: {\n    left: '0',\n    bottom: '0',\n    data: context.panel.data.series.map((s) => s.refId),\n    textStyle: {\n      color: 'rgba(128, 128, 128, .9)',\n    },\n  },\n  toolbox: {\n    feature: {\n      dataZoom: {\n        yAxisIndex: 'none',\n        icon: {\n          zoom: 'path://',\n          back: 'path://',\n        },\n      },\n      saveAsImage: {},\n    }\n  },\n  xAxis: {\n    type: 'time',\n  },\n  yAxis: {\n    type: 'value',\n    min: 'dataMin',\n  },\n  grid: {\n    left: '2%',\n    right: '2%',\n    top: '2%',\n    bottom: 24,\n    containLabel: true,\n  },\n  series,\n};",
+                "google": {
+                  "callback": "gmapReady",
+                  "key": ""
+                },
+                "map": "none",
+                "renderer": "canvas",
+                "themeEditor": {
+                  "config": "{}",
+                  "name": "custom"
+                },
+                "visualEditor": {
+                  "code": "if (!context.panel.data?.series?.length) return {};\nconst groupBy = 'Category1';\nconst groupBy2 = 'Category2';\nconst fields = context.panel.data.series[0].fields;\nconst cat1 = fields.find(f => f.name === groupBy).values;\nconst cat2 = fields.find(f => f.name === groupBy2).values;\nconst counts = fields.find(f => f.name === 'Count_ObjNr').values;\n\nconst lookup = {};\ncat2.forEach((c2, i) => {\n  if (!lookup[c2]) lookup[c2] = {};\n  lookup[c2][cat1[i]] = (lookup[c2][cat1[i]] ?? 0) + counts[i];\n});\n\nconst cat2Values = [...new Set(cat2)]\n  .filter(Boolean)\n  .sort((a, b) => {\n    const sumA = Object.values(lookup[a] ?? {}).reduce((s, v) => s + v, 0);\n    const sumB = Object.values(lookup[b] ?? {}).reduce((s, v) => s + v, 0);\n    return sumB - sumA;\n  })\n  .slice(0, 20);\n\n// Sort cat1 by total count descending — largest total = first series = bottom of stack\nconst cat1Values = [...new Set(cat1)]\n  .filter(Boolean)\n  .sort((a, b) => {\n    const sumA = cat2Values.reduce((s, c2) => s + (lookup[c2]?.[a] ?? 0), 0);\n    const sumB = cat2Values.reduce((s, c2) => s + (lookup[c2]?.[b] ?? 0), 0);\n    return sumB - sumA;\n  });\n\nreturn {\n  backgroundColor: 'transparent',\n  legend: {\n    type: 'scroll',\n    orient: 'vertical',\n    right: '1%',\n    top: 'middle',\n    width: 160,\n    itemWidth: 10,\n    itemHeight: 10,\n    itemGap: 6,\n    textStyle: { color: '#F5F5F5', fontSize: 11 },\n    pageTextStyle: { color: '#F5F5F5' },\n    pageIconColor: '#FFA314',\n    pageIconInactiveColor: '#bfbfbf',\n    data: cat1Values.slice(0, 20),\n  },\n  grid: { left: '4%', right: '180px', top: '6%', bottom: '8%', containLabel: true },\n  xAxis: {\n    type: 'category',\n    data: cat2Values,\n    axisLabel: {\n      interval :0,\n      color: '#F5F5F5',\n      fontSize: 11, rotate: 90,\n      formatter: name => name.length > 10 ? name.slice(0, 11) + '…' : name\n    }\n  },\n  yAxis: {\n    type: 'value',\n    axisLabel: { color: '#F5F5F5' },\n    splitLine: { lineStyle: { color: 'rgba(255,255,255,0.1)' } }\n  },\n  tooltip: {\n    trigger: 'axis',\n    axisPointer: { type: 'shadow' },\n    backgroundColor: '#051C2D',\n    borderColor: '#FFA314',\n    borderWidth: 1,\n    textStyle: { color: '#F5F5F5', fontSize: 12 },\n    formatter: params => {\n      const nonZero = params.filter(p => p.value > 0);\n      if (!nonZero.length) return '';\n      const rows = nonZero.map(p => `${p.marker} ${p.seriesName}: <b>${p.value}</b>`).join('<br/>');\n      return `<b>${params[0].name}</b><br/>${rows}`;\n    }\n  },\n  series: cat1Values.map(c1 => ({\n    name: c1 ?? '(none)',\n    type: 'bar',\n    stack: 'total',\n    emphasis: { focus: 'series' },\n    label: { show: false },\n    data: cat2Values.map(c2 => lookup[c2]?.[c1] ?? 0)\n  }))\n};\n",
+                  "dataset": [],
+                  "series": []
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "fieldMinMax": false
+                },
+                "overrides": []
               }
             }
           }
@@ -151,9 +228,10 @@
     "layout": {
       "kind": "AutoGridLayout",
       "spec": {
-        "maxColumnCount": 2,
+        "maxColumnCount": 1,
         "columnWidthMode": "standard",
         "rowHeightMode": "standard",
+        "fillScreen": true,
         "items": [
           {
             "kind": "AutoGridLayoutItem",
@@ -161,6 +239,15 @@
               "element": {
                 "kind": "ElementReference",
                 "name": "panel-1"
+              }
+            }
+          },
+          {
+            "kind": "AutoGridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-2"
               }
             }
           }
@@ -194,112 +281,23 @@
     "title": "echart-demo",
     "variables": [
       {
-        "kind": "QueryVariable",
+        "kind": "CustomVariable",
         "spec": {
-          "name": "view",
+          "name": "selectedCategory1",
+          "query": "",
           "current": {
             "text": "",
             "value": ""
           },
-          "label": "view name",
-          "hide": "dontHide",
-          "refresh": "onDashboardLoad",
-          "skipUrlSync": false,
-          "description": "View name to query",
-          "query": {
-            "kind": "DataQuery",
-            "group": "yesoreyeram-infinity-datasource",
-            "version": "v0",
-            "datasource": {
-              "name": "aixboms-rest"
-            },
-            "spec": {
-              "infinityQuery": {
-                "columns": [],
-                "data": "values\nfoo\nbar\nbaz",
-                "filters": [],
-                "format": "table",
-                "parser": "backend",
-                "refId": "",
-                "root_selector": "",
-                "source": "url",
-                "type": "json",
-                "url": "/aixboms/rest/grafana/meta/views",
-                "url_options": {
-                  "data": "",
-                  "method": "GET"
-                }
-              },
-              "meta": {
-                "textField": "shortName",
-                "valueField": "name"
-              },
-              "queryType": "infinity",
-              "refId": "variable"
-            }
-          },
-          "regex": "",
-          "regexApplyTo": "value",
-          "sort": "disabled",
-          "definition": "",
           "options": [],
           "multi": false,
           "includeAll": false,
-          "allowCustomValue": true
-        }
-      },
-      {
-        "kind": "QueryVariable",
-        "spec": {
-          "name": "groupBy",
-          "current": {
-            "text": "ObjNr",
-            "value": "ObjNr"
-          },
-          "label": "Group By",
+          "label": "Selected Class",
           "hide": "dontHide",
-          "refresh": "onDashboardLoad",
           "skipUrlSync": false,
-          "query": {
-            "kind": "DataQuery",
-            "group": "yesoreyeram-infinity-datasource",
-            "version": "v0",
-            "datasource": {
-              "name": "aixboms-rest"
-            },
-            "spec": {
-              "infinityQuery": {
-                "columns": [],
-                "data": "values\nfoo\nbar\nbaz",
-                "filters": [],
-                "format": "table",
-                "parser": "backend",
-                "refId": "",
-                "root_selector": "",
-                "source": "url",
-                "type": "json",
-                "url": "/aixboms/rest/grafana/meta/views/${view}",
-                "url_options": {
-                  "data": "",
-                  "method": "GET"
-                }
-              },
-              "meta": {
-                "textField": "name",
-                "valueField": "name"
-              },
-              "queryType": "infinity",
-              "refId": "variable"
-            }
-          },
-          "regex": "",
-          "regexApplyTo": "value",
-          "sort": "disabled",
-          "definition": "",
-          "options": [],
-          "multi": false,
-          "includeAll": false,
-          "allowCustomValue": true
+          "description": "Selected class for drill down",
+          "allowCustomValue": true,
+          "valuesFormat": "csv"
         }
       }
     ],
