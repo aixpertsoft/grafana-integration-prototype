@@ -1,0 +1,271 @@
+{
+  "apiVersion": "dashboard.grafana.app/v2",
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "ad7rp9d",
+    "namespace": "default",
+    "uid": "7eea7c0d-e17b-45dc-8e7a-86a871f9bbe8",
+    "resourceVersion": "1779619402220995",
+    "generation": 11,
+    "creationTimestamp": "2026-05-24T09:23:20Z",
+    "labels": {
+      "grafana.app/deprecatedInternalID": "4408185151660032"
+    },
+    "annotations": {
+      "grafana.app/createdBy": "user:afmueo24njw1sc",
+      "grafana.app/folder": "ffmueod300t8gd",
+      "grafana.app/saved-from-ui": "Grafana v13.0.1 (a100054f)",
+      "grafana.app/updatedBy": "user:afmueo24njw1sc",
+      "grafana.app/updatedTimestamp": "2026-05-24T10:43:22Z",
+      "grafana.app/folderTitle": "AixBOMS",
+      "grafana.app/folderUrl": "/dashboards/f/ffmueod300t8gd/aixboms"
+    }
+  },
+  "spec": {
+    "annotations": [
+      {
+        "kind": "AnnotationQuery",
+        "spec": {
+          "query": {
+            "kind": "DataQuery",
+            "group": "grafana",
+            "version": "v0",
+            "datasource": {
+              "name": "-- Grafana --"
+            },
+            "spec": {}
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "builtIn": true
+        }
+      }
+    ],
+    "cursorSync": "Off",
+    "description": "ehchart-sensor-demo\n",
+    "editable": true,
+    "elements": {
+      "panel-1": {
+        "kind": "Panel",
+        "spec": {
+          "id": 1,
+          "title": "Power consumption overview for all racks",
+          "description": "",
+          "links": [],
+          "data": {
+            "kind": "QueryGroup",
+            "spec": {
+              "queries": [
+                {
+                  "kind": "PanelQuery",
+                  "spec": {
+                    "query": {
+                      "kind": "DataQuery",
+                      "group": "yesoreyeram-infinity-datasource",
+                      "version": "v0",
+                      "datasource": {
+                        "name": "aixboms-rest"
+                      },
+                      "spec": {
+                        "columns": [],
+                        "filters": [],
+                        "format": "table",
+                        "global_query_id": "",
+                        "parser": "backend",
+                        "root_selector": "",
+                        "source": "url",
+                        "type": "json",
+                        "url": "/aixboms/rest/grafana/query/influx/execute?measurementName=rack_power&field=mean(power_w)&groupBy=rackId&timeInterval=${timeInterval}&from=${__from:date:iso}&to=${__to:date:iso}",
+                        "url_options": {
+                          "data": "",
+                          "method": "GET"
+                        }
+                      }
+                    },
+                    "refId": "A",
+                    "hidden": false
+                  }
+                }
+              ],
+              "transformations": [],
+              "queryOptions": {}
+            }
+          },
+          "vizConfig": {
+            "kind": "VizConfig",
+            "group": "volkovlabs-echarts-panel",
+            "version": "7.2.5",
+            "spec": {
+              "options": {
+                "baidu": {
+                  "callback": "bmapReady",
+                  "key": ""
+                },
+                "editor": {
+                  "format": "auto"
+                },
+                "editorMode": "visual",
+                "gaode": {
+                  "key": "",
+                  "plugin": "AMap.Scale,AMap.ToolBar"
+                },
+                "getOption": "const series = context.panel.data.series.map((s) => {\n  const sData = s.fields.find((f) => f.type === 'number').values.buffer || s.fields.find((f) => f.type === 'number').values;\n  const sTime = s.fields.find((f) => f.type === 'time').values.buffer || s.fields.find((f) => f.type === 'time').values;\n\n  return {\n    name: s.refId,\n    type: 'line',\n    showSymbol: false,\n    areaStyle: {\n      opacity: 0.1,\n    },\n    lineStyle: {\n      width: 1,\n    },\n    data: sData.map((d, i) => [sTime[i], d.toFixed(2)]),\n  };\n});\n\n/**\n * Enable Data Zoom by default\n */\nsetTimeout(() => context.panel.chart.dispatchAction({\n  type: 'takeGlobalCursor',\n  key: 'dataZoomSelect',\n  dataZoomSelectActive: true,\n}), 500);\n\n/**\n * Update Time Range on Zoom\n */\ncontext.panel.chart.on('datazoom', function (params) {\n  const startValue = params.batch[0]?.startValue;\n  const endValue = params.batch[0]?.endValue;\n  locationService.partial({ from: startValue, to: endValue });\n});\n\nreturn {\n  backgroundColor: 'transparent',\n  tooltip: {\n    trigger: 'axis',\n  },\n  legend: {\n    left: '0',\n    bottom: '0',\n    data: context.panel.data.series.map((s) => s.refId),\n    textStyle: {\n      color: 'rgba(128, 128, 128, .9)',\n    },\n  },\n  toolbox: {\n    feature: {\n      dataZoom: {\n        yAxisIndex: 'none',\n        icon: {\n          zoom: 'path://',\n          back: 'path://',\n        },\n      },\n      saveAsImage: {},\n    }\n  },\n  xAxis: {\n    type: 'time',\n  },\n  yAxis: {\n    type: 'value',\n    min: 'dataMin',\n  },\n  grid: {\n    left: '2%',\n    right: '2%',\n    top: '2%',\n    bottom: 24,\n    containLabel: true,\n  },\n  series,\n};",
+                "google": {
+                  "callback": "gmapReady",
+                  "key": ""
+                },
+                "map": "none",
+                "renderer": "canvas",
+                "themeEditor": {
+                  "config": "{}",
+                  "name": "custom"
+                },
+                "visualEditor": {
+                  "code": "if (!context.panel.data?.series?.length) return {};\n\n\n\nconst series = context.panel.data.series[0];\nconst timeField = series.fields.find(f => f.name === 'time');\nconst rackField = series.fields.find(f => f.name === 'rackId');\nconst powerField = series.fields.find(f => f.name === 'mean_power_w');\n\nif (!timeField || !rackField || !powerField) return {};\n\n// Group by rackId → { rackId: [[time, value], ...] }\nconst racks = {};\nfor (let i = 0; i < rackField.values.length; i++) {\n  const rack = rackField.values[i] ?? '(unknown)';\n  const t = timeField.values[i];\n  const power = powerField.values[i];\n  if (!racks[rack]) racks[rack] = [];\n  racks[rack].push([t, power]);\n}\n\nconst COLORS = [\n  '#FFA314', '#00C8FF', '#00E5A0', '#FF6B6B',\n  '#B57BFF', '#FFD166', '#06D6A0', '#EF476F',\n  '#118AB2', '#FF9F1C', '#A8DADC', '#E76F51'\n];\n\nconst rackIds = Object.keys(racks).sort();\n\nconst chartSeries = rackIds.map((rack, idx) => ({\n  name: rack,\n  type: 'line',\n  smooth: true,\n  symbol: 'circle',\n  symbolSize: 5,\n  showSymbol: false,\n  sampling: 'lttb',\n  lineStyle: { width: 2, color: COLORS[idx % COLORS.length] },\n  itemStyle: { color: COLORS[idx % COLORS.length] },\n  areaStyle: {\n    color: {\n      type: 'linear', x: 0, y: 0, x2: 0, y2: 1,\n      colorStops: [\n        { offset: 0, color: COLORS[idx % COLORS.length].replace(')', ', 0.25)').replace('rgb', 'rgba') + '' },\n        { offset: 1, color: 'rgba(0,0,0,0)' }\n      ]\n    }\n  },\n  emphasis: { focus: 'series', lineStyle: { width: 3 } },\n  data: racks[rack].sort((a, b) => a[0] - b[0])\n}));\n\nreturn {\n  backgroundColor: 'transparent',\n  animation: true,\n  grid: { top: 40, right: 20, bottom: 60, left: 70, containLabel: false },\n  tooltip: {\n    trigger: 'axis',\n    backgroundColor: '#051C2D',\n    borderColor: '#FFA314',\n    borderWidth: 1,\n    textStyle: { color: '#F5F5F5', fontSize: 12 },\n    axisPointer: {\n      type: 'cross',\n      lineStyle: { color: '#FFA314', opacity: 0.5 },\n      crossStyle: { color: '#FFA314', opacity: 0.3 }\n    },\n    formatter: params => {\n      const time = new Date(params[0].value[0]).toLocaleString();\n      const rows = params\n        .sort((a, b) => b.value[1] - a.value[1])\n        .map(p => `<span style=\"display:inline-block;width:8px;height:8px;border-radius:50%;background:${p.color};margin-right:5px\"></span>${p.seriesName}: <b>${p.value[1]?.toFixed(1)} W</b>`)\n        .join('<br/>');\n      return `<div style=\"font-size:11px;color:#aaa;margin-bottom:4px\">${time}</div>${rows}`;\n    }\n  },\n  legend: {\n    type: 'scroll',\n    bottom: 0,\n    itemWidth: 14,\n    itemHeight: 4,\n    itemGap: 14,\n    borderRadius: 2,\n    textStyle: { color: '#F5F5F5', fontSize: 11 },\n    pageTextStyle: { color: '#F5F5F5' },\n    pageIconColor: '#FFA314',\n    pageIconInactiveColor: '#bfbfbf'\n  },\n  xAxis: {\n    type: 'time',\n    axisLine: { lineStyle: { color: '#2a4a6a' } },\n    axisLabel: { color: '#8899aa', fontSize: 11 },\n    splitLine: { lineStyle: { color: '#0d2035', type: 'dashed' } },\n    axisTick: { lineStyle: { color: '#2a4a6a' } }\n  },\n  yAxis: {\n    type: 'value',\n    name: 'Power (W)',\n    nameTextStyle: { color: '#8899aa', fontSize: 11 },\n    axisLine: { lineStyle: { color: '#2a4a6a' } },\n    axisLabel: { color: '#8899aa', fontSize: 11, formatter: v => `${v} W` },\n    splitLine: { lineStyle: { color: '#0d2035', type: 'dashed' } }\n  },\n  series: chartSeries\n};\n",
+                  "dataset": [],
+                  "series": []
+                }
+              },
+              "fieldConfig": {
+                "defaults": {
+                  "fieldMinMax": false
+                },
+                "overrides": []
+              }
+            }
+          }
+        }
+      }
+    },
+    "layout": {
+      "kind": "AutoGridLayout",
+      "spec": {
+        "maxColumnCount": 1,
+        "columnWidthMode": "standard",
+        "rowHeightMode": "standard",
+        "fillScreen": true,
+        "items": [
+          {
+            "kind": "AutoGridLayoutItem",
+            "spec": {
+              "element": {
+                "kind": "ElementReference",
+                "name": "panel-1"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "links": [],
+    "liveNow": false,
+    "preload": false,
+    "tags": [],
+    "timeSettings": {
+      "timezone": "browser",
+      "from": "now-24h",
+      "to": "now",
+      "autoRefresh": "",
+      "autoRefreshIntervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ],
+      "hideTimepicker": false,
+      "fiscalYearStartMonth": 0
+    },
+    "title": "ehchart-sensor-demo",
+    "variables": [
+      {
+        "kind": "IntervalVariable",
+        "spec": {
+          "name": "timeInterval",
+          "query": "1m,10m,30m,1h,6h,12h,1d,7d,14d,30d",
+          "current": {
+            "text": "1m",
+            "value": "1m"
+          },
+          "options": [
+            {
+              "selected": true,
+              "text": "1m",
+              "value": "1m"
+            },
+            {
+              "selected": false,
+              "text": "10m",
+              "value": "10m"
+            },
+            {
+              "selected": false,
+              "text": "30m",
+              "value": "30m"
+            },
+            {
+              "selected": false,
+              "text": "1h",
+              "value": "1h"
+            },
+            {
+              "selected": false,
+              "text": "6h",
+              "value": "6h"
+            },
+            {
+              "selected": false,
+              "text": "12h",
+              "value": "12h"
+            },
+            {
+              "selected": false,
+              "text": "1d",
+              "value": "1d"
+            },
+            {
+              "selected": false,
+              "text": "7d",
+              "value": "7d"
+            },
+            {
+              "selected": false,
+              "text": "14d",
+              "value": "14d"
+            },
+            {
+              "selected": false,
+              "text": "30d",
+              "value": "30d"
+            }
+          ],
+          "auto": false,
+          "auto_min": "10s",
+          "auto_count": 30,
+          "refresh": "onTimeRangeChanged",
+          "label": "Group times by",
+          "hide": "dontHide",
+          "skipUrlSync": false
+        }
+      }
+    ],
+    "preferences": {
+      "layout": {
+        "kind": "AutoGridLayout",
+        "spec": {
+          "maxColumnCount": 3,
+          "columnWidthMode": "standard",
+          "rowHeightMode": "standard",
+          "items": []
+        }
+      }
+    }
+  }
+}
